@@ -1,0 +1,7 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/modules",
+        "/workspaces/niddy-bot/.venv/lib/python3.11/site-packages",
+        "./airtable-chat-2/backend/app/engine"
+    ]
+}
