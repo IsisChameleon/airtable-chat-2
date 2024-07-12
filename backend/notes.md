@@ -5,26 +5,19 @@
             parse_choice_select_answer_fn or default_parse_choice_select_answer_fn
         )
 
-### poetry config
+### ACtivate .venv with poetry:
 
-./home/node/.config/pypoetry/config.toml
+node ➜ /workspaces/airtable-chat-2/backend (main) $ poetry shell
+Spawning shell within /workspaces/airtable-chat-2/backend/.venv
+. /workspaces/airtable-chat-2/backend/.venv/bin/activate
 
-node ➜ /workspaces/airtable-chat-2/backend (main) $ poetry config --list
-cache-dir = "/home/node/.cache/pypoetry"
-experimental.system-git-client = false
-installer.max-workers = null
-installer.modern-installation = true
-installer.no-binary = null
-installer.parallel = true
-keyring.enabled = true
-solver.lazy-wheel = true
-virtualenvs.create = false
-virtualenvs.in-project = true
-virtualenvs.options.always-copy = false
-virtualenvs.options.no-pip = false
-virtualenvs.options.no-setuptools = false
-virtualenvs.options.system-site-packages = false
-virtualenvs.path = "{cache-dir}/virtualenvs"  # /home/node/.cache/pypoetry/virtualenvs
-virtualenvs.prefer-active-python = false
-virtualenvs.prompt = "{project_name}-py{python_version}"
-warnings.export = true
+### App problems
+
+1) llmrerank sometimes returns less than 8 nodes, it seems the references streaming using events callback 
+only cares about retrieval and doesn't take into account llmrerank
+Probably there is no event callback setup on llmrerank.
+
+2) llmrerank llm also gets creative sometimes adding explation to the answers, need to update to a pydantic response
+instead of this crappy text format.
+
+3) Need to create a custom NodeInfo component for the front-end

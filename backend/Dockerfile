@@ -1,26 +1,13 @@
-FROM python:3.11 as build
+FROM public.ecr.aws/lambda/python:3.11
 
-WORKDIR /app
+# Copy requirements.txt
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
 
-ENV PYTHONPATH=/app
+# Install the specified packages
+RUN pip install -r requirements.txt
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+# Copy function code
+COPY . ${LAMBDA_TASK_ROOT}
 
-# Install Chromium for web loader
-# Can disable this if you don't use the web loader to reduce the image size
-RUN apt update && apt install -y chromium chromium-driver
-
-# Install dependencies
-COPY ./pyproject.toml ./poetry.lock* /app/
-RUN poetry install --no-root --no-cache --only main
-
-# ====================================
-FROM build as release
-
-COPY . .
-
-CMD ["python", "main.py"]
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

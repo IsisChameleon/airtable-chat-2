@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "infra"
+version = "0.1.0"
+description = ""
+authors = ["Isabelle De Backer"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+constructs = ">=10.0.0,<11.0.0"
+aws-cdk-lib = "^2.148.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "6.2.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -11,7 +11,10 @@
         "mypy",
         "poetry"
       ]
-    }
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/aws-cdk:2": {},
+		"ghcr.io/tomharvey/devcontainer-features/aws-sso-util:1": {}
   },
   "customizations": {
     "codespaces": {
@@ -32,7 +35,8 @@
 				"eamodio.gitlens",
         "davidanson.vscode-markdownlint",
 				"TabNine.tabnine-vscode",
-				"ms-toolsai.jupyter"
+				"ms-toolsai.jupyter",
+        "amazonwebservices.aws-toolkit-vscode"
       ],
       "settings": {
         "[python]": {
@@ -54,11 +58,21 @@
     }
   },
   "containerEnv": {
-    "POETRY_VIRTUALENVS_INPROJECT": "true",
+    // https://python-poetry.org/docs/configuration/
     "POETRY_VIRTUALENVS_IN_PROJECT": "true",
-    "POETRY_VIRTUALENVS_IN-PROJECT": "true",
     "POETRY_VIRTUALENVS_CREATE": "true",
-    "PYTHONPATH": "${PYTHONPATH}:${workspaceFolder}/backend"
+    "PYTHONPATH": "${PYTHONPATH}:${workspaceFolder}/backend",
+    		// The below needs to be configured to match your AWS SSO configuration if you're using AWS SSO.
+		// You could opt to use static AWS IAM Keys instead.
+		// If you do use static IAM keys, see further below for sharing `/.aws`
+		// between your local machine and your development environment.
+		"AWS_DEFAULT_SSO_START_URL": "https://d-9767492cea.awsapps.com/start",
+		"AWS_DEFAULT_SSO_REGION": "ap-southeast-2",
+
+		// This configures the region that you will create AWS resources in by default.
+		// It's common to pick one closer to you - I think it's unnessecary and us-east-1
+		// is the msot feature complete, the lowest cost and so is a good default.
+		"AWS_DEFAULT_REGION": "ap-southeast-2"
   },
   "forwardPorts": [
     3000,
@@ -66,6 +80,8 @@
   ],
   "postCreateCommand": [
     "cd backend && poetry install",
+    "cd ../infra && poetry install",
+    "cd ../infra && npm install -g aws-cdk",
     "cd ../frontend && npm install"
   ]
 }
