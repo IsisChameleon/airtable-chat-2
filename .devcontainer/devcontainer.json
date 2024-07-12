@@ -54,12 +54,18 @@
     }
   },
   "containerEnv": {
-    "POETRY_VIRTUALENVS_CREATE": "false",
+    "POETRY_VIRTUALENVS_INPROJECT": "true",
+    "POETRY_VIRTUALENVS_IN_PROJECT": "true",
+    "POETRY_VIRTUALENVS_IN-PROJECT": "true",
+    "POETRY_VIRTUALENVS_CREATE": "true",
     "PYTHONPATH": "${PYTHONPATH}:${workspaceFolder}/backend"
   },
   "forwardPorts": [
     3000,
     8000
   ],
-  "postCreateCommand": "cd backend && poetry install && cd ../frontend && npm install"
+  "postCreateCommand": [
+    "cd backend && poetry install",
+    "cd ../frontend && npm install"
+  ]
 }

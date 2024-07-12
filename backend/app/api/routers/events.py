@@ -1,12 +1,12 @@
-import json
 import asyncio
+import json
 import logging
-from typing import AsyncGenerator, Dict, Any, List, Optional
+from typing import Any, AsyncGenerator, Dict, List, Optional
+
 from llama_index.core.callbacks.base import BaseCallbackHandler
 from llama_index.core.callbacks.schema import CBEventType
 from llama_index.core.tools.types import ToolOutput
 from pydantic import BaseModel
-
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +129,7 @@ class EventCallbackHandler(BaseCallbackHandler):
     ) -> None:
         event = CallbackEvent(event_id=event_id, event_type=event_type, payload=payload)
         if event.to_response() is not None:
-            self._aqueue.put_nowait(event)
+            self._aqueue.put_nowait(event)  # put without waiting for the queue to empty if the queue is full, raise exception if full
 
     def start_trace(self, trace_id: Optional[str] = None) -> None:
         """No-op."""

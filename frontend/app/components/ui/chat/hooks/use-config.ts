@@ -8,23 +8,23 @@ export interface ChatConfig {
 }
 
 export function useClientConfig() {
-  const API_ROUTE = "/api/chat/config";
-  const chatAPI = process.env.NEXT_PUBLIC_CHAT_API;
+  const CONFIG_ENDPOINT_PATH = "/api/chat/config";
+  const chatAPIOrigin = process.env.NEXT_PUBLIC_CHAT_API;
   const [config, setConfig] = useState<ChatConfig>({
-    chatAPI,
+    chatAPI: chatAPIOrigin,
   });
 
-  const configAPI = useMemo(() => {
-    const backendOrigin = chatAPI ? new URL(chatAPI).origin : "";
-    return `${backendOrigin}${API_ROUTE}`;
-  }, [chatAPI]);
+  const configEndpointRoute = useMemo(() => {
+    const backendOrigin = chatAPIOrigin ? new URL(chatAPIOrigin).origin : "";
+    return `${backendOrigin}${CONFIG_ENDPOINT_PATH}`;
+  }, [chatAPIOrigin]);
 
   useEffect(() => {
-    fetch(configAPI)
+    fetch(configEndpointRoute)
       .then((response) => response.json())
-      .then((data) => setConfig({ ...data, chatAPI }))
+      .then((data) => setConfig({ ...data, chatAPI: chatAPIOrigin }))
       .catch((error) => console.error("Error fetching config", error));
-  }, [chatAPI, configAPI]);
+  }, [chatAPIOrigin, configEndpointRoute]);
 
   return config;
 }

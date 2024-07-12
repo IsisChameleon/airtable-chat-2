@@ -4,4 +4,3 @@ storage
 backend/.venv/
 infra/.venv/
 .venv
-poetry.lock

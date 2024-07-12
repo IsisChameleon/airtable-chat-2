@@ -1,17 +1,18 @@
-from dotenv import load_dotenv
-
-load_dotenv()
-
-import os
 import logging
-from llama_index.core.settings import Settings
+import os
+
+from dotenv import load_dotenv
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.core.storage.docstore import SimpleDocumentStore
+from llama_index.core.settings import Settings
 from llama_index.core.storage import StorageContext
-from app.settings import init_settings
+from llama_index.core.storage.docstore import SimpleDocumentStore
+
 from app.engine.loaders import get_documents
-from app.engine.vectordb import get_vector_store
+from app.engine.vector_store import get_vector_store
+from app.settings import init_settings
+
+load_dotenv()
 
 
 logging.basicConfig(level=logging.INFO)

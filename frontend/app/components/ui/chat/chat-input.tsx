@@ -156,7 +156,7 @@ export default function ChatInput(
         <Input
           autoFocus
           name="message"
-          placeholder="Type a message"
+          placeholder="Ask a question about Build Club members"
           className="flex-1"
           value={props.input}
           onChange={props.handleInputChange}

@@ -1,24 +1,23 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 import logging
 import os
+
 import uvicorn
+from app.api.routers.chat import chat_router
+from app.observability import init_observability
+from app.settings import init_settings
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from app.api.routers.chat import chat_router
-from app.settings import init_settings
-from app.observability import init_observability
 from fastapi.staticfiles import StaticFiles
 
+load_dotenv()
+environment = os.getenv("ENVIRONMENT", "dev")  # Default to 'development' if not set
 
-app = FastAPI()
+app = FastAPI(debug=(environment == "dev"))
 
 init_settings()
 init_observability()
-
-environment = os.getenv("ENVIRONMENT", "dev")  # Default to 'development' if not set
 
 if environment == "dev":
     logger = logging.getLogger("uvicorn")

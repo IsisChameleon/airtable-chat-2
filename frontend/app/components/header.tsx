@@ -12,11 +12,11 @@ export default function Header() {
           href="https://www.llamaindex.ai/"
           className="flex items-center justify-center font-nunito text-lg font-bold gap-2"
         >
-          <span>Built by LlamaIndex</span>
+          <span>Chat about Build Club Members</span>
           <Image
             className="rounded-xl"
-            src="/llama.png"
-            alt="Llama Logo"
+            src="/build-club-mini.png"
+            alt="Build Club Logo"
             width={40}
             height={40}
             priority

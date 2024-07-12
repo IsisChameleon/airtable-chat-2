@@ -1,20 +1,20 @@
-import os
 import logging
 
 from aiostream import stream
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from llama_index.core.chat_engine.types import BaseChatEngine
 from llama_index.core.llms import MessageRole
-from app.engine import get_chat_engine
-from app.api.routers.vercel_response import VercelStreamResponse
+
 from app.api.routers.events import EventCallbackHandler
 from app.api.routers.models import (
-    ChatData,
     ChatConfig,
-    SourceNodes,
-    Result,
+    ChatData,
     Message,
+    Result,
+    SourceNodes,
 )
+from app.api.routers.vercel_response import VercelStreamResponse
+from app.engine import get_chat_engine
 
 chat_router = r = APIRouter()
 
@@ -106,8 +106,6 @@ async def chat_request(
 
 @r.get("/config")
 async def chat_config() -> ChatConfig:
-    starter_questions = None
-    conversation_starters = os.getenv("CONVERSATION_STARTERS")
-    if conversation_starters and conversation_starters.strip():
-        starter_questions = conversation_starters.strip().split("\n")
+    starter_questions = ["Who's building in the health space?", "What's Isabelle the latest build update?"]
+    
     return ChatConfig(starterQuestions=starter_questions)
