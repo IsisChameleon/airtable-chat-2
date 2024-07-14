@@ -1,43 +1,71 @@
 from aws_cdk import (
-    Stack,
     SecretValue,
-    aws_codepipeline as codepipeline,
-    aws_codepipeline_actions as codepipeline_actions,
+    Stack,
+)
+from aws_cdk import (
     aws_codebuild as codebuild,
-    aws_lambda as lambda_,
+)
+from aws_cdk import (
     aws_codedeploy as codedeploy,
+)
+from aws_cdk import (
+    aws_codepipeline as codepipeline,
+)
+from aws_cdk import (
+    aws_codepipeline_actions as codepipeline_actions,
+)
+from aws_cdk import (
+    aws_lambda as lambda_,
 )
 from constructs import Construct
 
+
 class BackendDeploymentPipelineStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, lambda_function: lambda_.Function, function_alias: lambda_.Alias, **kwargs) -> None:
+    def __init__(
+        self,
+        scope: Construct,
+        construct_id: str,
+        lambda_function: lambda_.Function,
+        function_alias: lambda_.Alias,
+        **kwargs,
+    ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         self.pipeline = codepipeline.Pipeline(self, "AirtableChat2BackendPipeline")
 
         self.source_output = codepipeline.Artifact()
         self.source_action = codepipeline_actions.GitHubSourceAction(
-            action_name="GitHub",
+            action_name="GitHubSourceBackend",
             output=self.source_output,
             owner="isischameleon",
             repo="airtable-chat2",
             branch="main",
-            oauth_token=SecretValue.secrets_manager("airtable-chat2-github-token"),
+            oauth_token=SecretValue.secrets_manager(
+                "test/airtable-chat-2/github-token"
+            ),
+            trigger=codepipeline_actions.GitHubTrigger.WEBHOOK,
+            filter_group=[
+                codepipeline_actions.GitHubSourceFilter.path("backend/"),
+            ],
         )
 
-        build_project = codebuild.PipelineProject(self, "BuildProject",
-            build_spec=codebuild.BuildSpec.from_object({
-                "version": "0.2",
-                "phases": {
-                    "build": {
-                        "commands": [
-                            "cd backend",
-                            "docker build -t airtable-chat2 .",
-                            "docker push ${REPOSITORY_URI}:latest"
-                        ]
-                    }
+        build_project = codebuild.PipelineProject(
+            self,
+            "BuildProject",
+            build_spec=codebuild.BuildSpec.from_object(
+                {
+                    "version": "0.2",
+                    "phases": {
+                        "build": {
+                            "commands": [
+                                "cd backend",
+                                "docker build -t airtable-chat2 .",
+                                "docker push ${REPOSITORY_URI}:latest",
+                            ]
+                        }
+                    },
                 }
-            }),
+            ),
             environment=codebuild.BuildEnvironment(
                 privileged=True,
             ),
@@ -53,9 +81,10 @@ class BackendDeploymentPipelineStack(Stack):
 
         # Create a Lambda deployment group
         self.deployment_group = codedeploy.LambdaDeploymentGroup(
-            self, "LambdaDeploymentGroup",
+            self,
+            "LambdaDeploymentGroup",
             alias=function_alias,
-            deployment_config=codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE
+            deployment_config=codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
         )
 
         # Use CodeDeployServerDeployAction for Lambda deployment
@@ -65,17 +94,8 @@ class BackendDeploymentPipelineStack(Stack):
             input=self.build_output,
         )
 
-        self.pipeline.add_stage(
-            stage_name="Source",
-            actions=[self.source_action]
-        )
+        self.pipeline.add_stage(stage_name="Source", actions=[self.source_action])
 
-        self.pipeline.add_stage(
-            stage_name="Build",
-            actions=[self.build_action]
-        )
+        self.pipeline.add_stage(stage_name="Build", actions=[self.build_action])
 
-        self.pipeline.add_stage(
-            stage_name="Deploy",
-            actions=[self.deploy_action]
-        )
+        self.pipeline.add_stage(stage_name="Deploy", actions=[self.deploy_action])
