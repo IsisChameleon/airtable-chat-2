@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-import aws_cdk as cdk
+from aws_cdk import App
 
 from infra.backend_deployment_stack import BackendDeploymentPipelineStack
 from infra.backend_stack import BackendStack
 
-app = cdk.App()
+app = App()
 backend_stack = BackendStack(app, "AirtableChat2BackendStack")
-pipeline_stack = BackendDeploymentPipelineStack(
-    app,
-    "AirtableChat2BackendDeploymentPipelineStack",
-    lambda_function=backend_stack.airtable2_lambda,
-    function_alias=backend_stack.function_alias,
-)
+pipeline_stack = BackendDeploymentPipelineStack(app, "AirtableChat2BackendDeploymentPipelineStack")
+
+# Add dependency to ensure BackendStack is created first
+pipeline_stack.add_dependency(backend_stack)
+
 app.synth()
