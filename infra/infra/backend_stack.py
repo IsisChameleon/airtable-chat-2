@@ -39,8 +39,8 @@ class BackendStack(Stack):
         self.docker_image = ecr_assets.DockerImageAsset(
             self,
             "BackendDockerImage",
-            directory="../backend",  # Path to your Dockerfile and Lambda code
-            file="Dockerfile",  # Name of your Dockerfile
+            directory="../backend",
+            file="Dockerfile",
         )
 
         # Create the Lambda function using the Docker image
@@ -54,19 +54,6 @@ class BackendStack(Stack):
             memory_size=1024,
             timeout=Duration.seconds(30),
         )
-
-        # # Create the Lambda function using a placeholder image
-        # self.airtable2_lambda = lambda_.DockerImageFunction(
-        #     self,
-        #     "AirtableChat2Function",
-        #     code=lambda_.DockerImageCode.from_ecr(
-        #         repository=self.ecr_repository,
-        #         tag_or_digest="latest"
-        #     ),
-        #     memory_size=1024,
-        #     timeout=Duration.seconds(30),
-        #     vpc=self.vpc,
-        # )
 
         # Create an alias
         self.function_alias = lambda_.Alias(
