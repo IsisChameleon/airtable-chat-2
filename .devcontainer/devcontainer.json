@@ -15,7 +15,8 @@
     "ghcr.io/devcontainers/features/aws-cli:1": {},
 		"ghcr.io/devcontainers-contrib/features/aws-cdk:2": {},
     "ghcr.io/tomharvey/devcontainer-features/aws-sso-util:1": {},
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {}
   },
   "customizations": {
     "codespaces": {
@@ -33,11 +34,12 @@
         "ms-python.vscode-pylance",
         "charliermarsh.ruff",
         "github.vscode-pull-request-github",
-				"eamodio.gitlens",
+        "eamodio.gitlens",
         "davidanson.vscode-markdownlint",
-				"TabNine.tabnine-vscode",
-				"ms-toolsai.jupyter",
-        "amazonwebservices.aws-toolkit-vscode"
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "ms-toolsai.jupyter",
+        "amazonwebservices.aws-toolkit-vscode",
+        "sourcegraph.cody-ai"
       ],
       "settings": {
         "[python]": {
@@ -52,8 +54,7 @@
 						"source.organizeImports": "always",
 						"source.fixAll": "explicit"
 					},
-					"editor.formatOnSave": true,
-					"editor.defaultFormatter": "TabNine.tabnine-vscode"
+					"editor.formatOnSave": true
         }
       }
     }
@@ -63,6 +64,7 @@
     "POETRY_VIRTUALENVS_IN_PROJECT": "true",
     "POETRY_VIRTUALENVS_CREATE": "true",
     "PYTHONPATH": "${PYTHONPATH}:${workspaceFolder}/backend",
+    "MINIKUBE_HOME": "/home/vscode/.minikube",
     		// The below needs to be configured to match your AWS SSO configuration if you're using AWS SSO.
 		// You could opt to use static AWS IAM Keys instead.
 		// If you do use static IAM keys, see further below for sharing `/.aws`
@@ -79,10 +81,6 @@
     3000,
     8000
   ],
-  "postCreateCommand": [
-    "cd backend && poetry install",
-    "cd ../infra && poetry install",
-    "cd ../infra && npm install -g aws-cdk",
-    "cd ../frontend && npm install"
-  ]
+  // This will run once after container is created
+  "postCreateCommand": "bash postCreateCommand.sh"
 }
